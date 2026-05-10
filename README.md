@@ -2,6 +2,7 @@
 
 > **Modelling Load Balancing in Distributed Systems with Abelian Sandpile Theory**
 
+[![Build & Test](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/maven.yml/badge.svg)](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/maven.yml)
 [![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)](https://www.java.com)
 [![Maven](https://img.shields.io/badge/build-Maven-blue?logo=apachemaven)](https://maven.apache.org)
 [![Tests](https://img.shields.io/badge/tests-53%20passing-brightgreen?logo=junit5)](src/test)
