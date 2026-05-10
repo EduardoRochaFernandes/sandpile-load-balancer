@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ── Project coordinates ─────────────────────────────────────────── -->
+    <groupId>io.github.eduardorochaferandes</groupId>
+    <artifactId>sandpile-load-balancer</artifactId>
+    <version>2.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Sandpile Load Balancer</name>
+    <description>
+        Modelling load balancing in distributed systems using Abelian Sandpile theory.
+        Originally developed as ISEP LAPR1 group project (2025/26); refactored and
+        extended independently for portfolio and learning purposes.
+    </description>
+    <url>https://github.com/EduardoRochaFernandes/sandpile-load-balancer</url>
+
+    <!-- ── Properties ──────────────────────────────────────────────────── -->
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions -->
+        <commons-math4.version>4.0-beta1</commons-math4.version>
+        <commons-numbers.version>1.2</commons-numbers.version>
+        <junit.version>5.10.2</junit.version>
+        <assertj.version>3.25.3</assertj.version>
+    </properties>
+
+    <!-- ── Dependencies ────────────────────────────────────────────────── -->
+    <dependencies>
+
+        <!-- Apache Commons Math 4 — eigendecomposition, linear algebra -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy</artifactId>
+            <version>${commons-math4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-core</artifactId>
+            <version>${commons-math4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy-exception</artifactId>
+            <version>${commons-math4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-core</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+
+        <!-- JUnit 5 — test framework -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- AssertJ — fluent assertions -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ── Build ────────────────────────────────────────────────────────── -->
+    <build>
+        <plugins>
+
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Surefire — runs JUnit 5 tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+
+            <!-- Shade — fat JAR with all dependencies bundled -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>llbc.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- ── Repositories (Commons Math 4 beta is not in Maven Central) ─── -->
+    <repositories>
+        <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+
+</project>

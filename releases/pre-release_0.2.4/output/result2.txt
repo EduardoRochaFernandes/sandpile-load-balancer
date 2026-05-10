@@ -1,0 +1,4 @@
+The dimension 30 is too big. Number isn't precise.
+det(L) = Infinity
+Elapsed time in milliseconds: 2213 
+

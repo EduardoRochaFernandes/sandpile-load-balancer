@@ -1,0 +1,3 @@
+det(L) = 8,679170e+272
+Elapsed time in milliseconds: 349 
+

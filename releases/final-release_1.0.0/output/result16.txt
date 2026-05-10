@@ -1,0 +1,3 @@
+Number of recurrent matrices: 1,183291e+117
+Elapsed time in milliseconds: 127 
+

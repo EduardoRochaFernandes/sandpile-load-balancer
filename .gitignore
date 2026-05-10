@@ -1,0 +1,53 @@
+# ===== Java =====
+*.class
+*.jar
+!releases/**/*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+
+# ===== Build output =====
+out/
+build/
+target/
+bin/
+*.iml
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ===== Windows =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== Linux =====
+*~
+
+# ===== Output files (generated at runtime) =====
+output/*.txt
+output/*.csv
+output/*.jpg
+output/*.png
+
+# ===== Logs =====
+*.log

@@ -1,0 +1,37 @@
+Matrix A:
+1,5,2
+4,4,2
+6,1,0
+Neutral Element E:
+1,4,2
+4,4,2
+6,1,0
+
+WARNING: Matrix A is not stable. Stabilizing...
+Stabilized Matrix A:
+3,2,3
+2,2,3
+3,3,0
+
+WARNING: Neutral element is not stable. Stabilizing...
+Stabilized Neutral Element E:
+3,1,3
+2,2,3
+3,3,0
+
+Searching for inverse matrix...
+Total matrices to test: 262144
+Inverse found after testing 140062 matrices!
+Total recurrent matrices tested: 41534
+
+Inverse Matrix found:
+1,3,1
+0,3,0
+2,0,2
+
+Verification A + A^(-1):
+3,1,3
+2,2,3
+3,3,0
+Is equal to E? Yes
+

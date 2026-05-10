@@ -1,0 +1,6 @@
+The matrix in matrix3.csv is not the neutral matrix!
+
+[  1  5  2  ]
+[  4  4  2  ]
+[  6  1  0  ]
+

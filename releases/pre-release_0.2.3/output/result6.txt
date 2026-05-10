@@ -1,0 +1,2 @@
+The max dimension permitted is 1000.
+
