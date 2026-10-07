@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & test (Java ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '17', '21' ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build, test and package
+        run: mvn --batch-mode --no-transfer-progress verify
+
+      - name: Smoke test - run the packaged JAR
+        run: |
+          java -jar target/sandpile-load-balancer-2.0.0.jar
+          java -jar target/sandpile-load-balancer-2.0.0.jar stabilise input/matrix5.csv
+          java -jar target/sandpile-load-balancer-2.0.0.jar resilience 5
+
+      - name: Smoke test - run the original release JAR
+        working-directory: releases/final-release_1.0.0
+        run: |
+          mkdir -p output
+          java -jar main.jar -f 2 -a matrix5.csv -o result.txt
+          cat output/result.txt
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-java${{ matrix.java }}
+          path: target/surefire-reports/

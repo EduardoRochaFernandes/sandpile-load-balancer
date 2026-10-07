@@ -1,0 +1,20 @@
+{
+  "name": "Sandpile Load Balancer (Java 17 + Maven)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": "true"
+    }
+  },
+  "postCreateCommand": "mvn --batch-mode --no-transfer-progress -DskipTests package",
+  "customizations": {
+    "vscode": {
+      "extensions": [ "vscjava.vscode-java-pack" ],
+      "settings": { "java.configuration.updateBuildConfiguration": "automatic" }
+    },
+    "codespaces": {
+      "openFiles": [ "README.md", "src/main/java/llbc/Main.java" ]
+    }
+  }
+}
