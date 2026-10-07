@@ -66,16 +66,16 @@ public final class ResilienceAnalyser {
     public void printReport() {
         System.out.printf("%n");
         System.out.printf("╔══════════════════════════════════════════════════════════╗%n");
-        System.out.printf("║    NETWORK RESILIENCE REPORT  —  %d×%-22d  ║%n", n, n);
+        System.out.printf("║    NETWORK RESILIENCE REPORT  —  %-24s║%n", n + "×" + n);
         System.out.printf("╠══════════════════════════════════════════════════════════╣%n");
-        System.out.printf("║  Algebraic Connectivity (λ₂)  : %-26.6f ║%n", lambda2);
+        System.out.printf("║  Algebraic Connectivity (λ₂)  : %-24.6f ║%n", lambda2);
         System.out.printf("║    → Resistance to targeted node-removal attacks         ║%n");
-        System.out.printf("║  Spectral Gap (λ_max − λ_min) : %-26.6f ║%n", spectralGap());
+        System.out.printf("║  Spectral Gap (λ_max − λ_min) : %-24.6f ║%n", spectralGap());
         System.out.printf("║    → Speed of recovery after load spike or attack        ║%n");
         if (groupOrder > 999_999) {
-            System.out.printf("║  Resilient State Count        : %-26.3e ║%n", groupOrder);
+            System.out.printf("║  Resilient State Count        : %-24.3e ║%n", groupOrder);
         } else {
-            System.out.printf("║  Resilient State Count        : %-26.0f ║%n", groupOrder);
+            System.out.printf("║  Resilient State Count        : %-24.0f ║%n", groupOrder);
         }
         System.out.printf("║    → Safe operating states (sandpile group order |G|)    ║%n");
         System.out.printf("╚══════════════════════════════════════════════════════════╝%n");

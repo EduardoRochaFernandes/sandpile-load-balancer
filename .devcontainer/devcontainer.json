@@ -1,9 +1,9 @@
 {
-  "name": "Sandpile Load Balancer (Java 17 + Maven)",
+  "name": "Sandpile Load Balancer (Java 21 + Maven)",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
-      "version": "17",
+      "version": "21",
       "installMaven": "true"
     }
   },

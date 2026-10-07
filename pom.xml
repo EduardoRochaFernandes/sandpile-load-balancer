@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- ── Project coordinates ─────────────────────────────────────────── -->
-    <groupId>io.github.eduardorochaferandes</groupId>
+    <groupId>io.github.eduardorochafernandes</groupId>
     <artifactId>sandpile-load-balancer</artifactId>
     <version>2.0.0</version>
     <packaging>jar</packaging>
@@ -136,15 +136,5 @@
 
         </plugins>
     </build>
-
-    <!-- ── Repositories (Commons Math 4 beta is not in Maven Central) ─── -->
-    <repositories>
-        <repository>
-            <id>apache-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
 
 </project>

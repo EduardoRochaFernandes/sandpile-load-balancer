@@ -18,9 +18,9 @@ jobs:
       matrix:
         java: [ '17', '21' ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           java-version: ${{ matrix.java }}
           distribution: temurin
@@ -35,16 +35,21 @@ jobs:
           java -jar target/sandpile-load-balancer-2.0.0.jar stabilise input/matrix5.csv
           java -jar target/sandpile-load-balancer-2.0.0.jar resilience 5
 
-      - name: Smoke test - run the original release JAR
+      - name: Smoke test - run the original release JAR (needs Java 21+)
+        if: matrix.java == '21'
         working-directory: releases/final-release_1.0.0
         run: |
           mkdir -p output
-          java -jar main.jar -f 2 -a matrix5.csv -o result.txt
-          cat output/result.txt
+          for args in "-f 1 -a matrix3.csv" "-f 2 -a matrix5.csv" "-f 4 -a matrix3.csv"                       "-f 5 -a matrix3.csv" "-f 6 -d 3" "-f 7 -d 4" "-f 9 -d 2" "-f 10 -d 2"; do
+            echo "::group::java -jar main.jar $args -o result.txt"
+            java -jar main.jar $args -o result.txt
+            cat output/result.txt
+            echo "::endgroup::"
+          done
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports-java${{ matrix.java }}
           path: target/surefire-reports/

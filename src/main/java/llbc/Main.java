@@ -101,7 +101,7 @@ public class Main {
         int sweeps = load.countStabilisationSteps();
         SandpileMatrix stable = load.copy().stabilise();
         int after = total(stable);
-        out.println("Stabilised after " + sweeps + " sweeps; "
+        out.println("Stabilised after " + sweeps + " sweep(s); "
             + (before - after) + " tasks left through the boundary (sink):");
         out.print(stable);
         out.println("Recurrent (Dhar's burning algorithm): " + DharBurning.isRecurrent(stable));
@@ -125,7 +125,7 @@ public class Main {
         out.println("Initial load (" + total(load) + " tasks):");
         out.print(load);
         SandpileMatrix stable = load.copy().stabilise();
-        out.println("Balanced after " + load.countStabilisationSteps() + " toppling sweeps ("
+        out.println("Balanced after " + load.countStabilisationSteps() + " toppling sweep(s) ("
             + (total(load) - total(stable)) + " tasks left through the boundary):");
         out.print(stable);
         out.println();
