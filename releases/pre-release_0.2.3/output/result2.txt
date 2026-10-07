@@ -1,3 +1,0 @@
-det(L) = 1,262313e+26
-Elapsed time in milliseconds: 41 
-

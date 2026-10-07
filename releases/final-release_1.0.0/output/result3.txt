@@ -1,2 +1,0 @@
-Only .csv files are permitted.
-

@@ -1,53 +1,26 @@
-# ===== Java =====
-*.class
-*.jar
-!releases/**/*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-hs_err_pid*
-
-# ===== Build output =====
+# Build output
+target/
 out/
 build/
-target/
 bin/
-*.iml
+*.class
+*.jar
+!releases/final-release_1.0.0/main.jar
 
-# ===== IDE =====
+# Runtime output of the CLI (the pre-compiled release JAR writes to ./output)
+output/
+
+# IDE / OS
 .idea/
 .vscode/
 *.iml
-*.ipr
-*.iws
 .classpath
 .project
 .settings/
 *.swp
-*.swo
-
-# ===== macOS =====
 .DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# ===== Windows =====
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
 
-# ===== Linux =====
-*~
-
-# ===== Output files (generated at runtime) =====
-output/*.txt
-output/*.csv
-output/*.jpg
-output/*.png
-
-# ===== Logs =====
+# Logs / archives
 *.log
+hs_err_pid*
