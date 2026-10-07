@@ -2,6 +2,10 @@
 
 ## Scope
 
+> **Scope note.** This threat model is a conceptual discussion that maps sandpile concepts onto network-security
+> ideas by analogy. The mapping has not been validated against real systems; the numbers are produced by
+> the classes in `src/`. Treat it as a learning exercise, not as a security assessment method.
+
 This threat model maps the sandpile distributed system model to real-world attack scenarios relevant to network infrastructure security. It is intended to contextualise the mathematical results of this project within a practical cybersecurity framework.
 
 The modelled system is an **n×n grid of interconnected servers** (nodes) with a boundary sink, as described in [RESILIENCE_ANALYSIS.md](RESILIENCE_ANALYSIS.md).
@@ -39,8 +43,8 @@ The modelled system is an **n×n grid of interconnected servers** (nodes) with a
 **Sandpile mapping:** Corresponds to injecting a large number of grains at a target node, causing a chain reaction of topplings.
 
 **Mitigation via model:**
-- Recurrent configurations guarantee the network stabilises after any finite injection
-- The number of toppling steps is bounded and predictable
+- On a grid with a sink, every configuration stabilises after any finite injection (the model has no livelock)
+- The number of toppling sweeps can be measured (`SandpileMatrix.countStabilisationSteps()`)
 - Functionality 2 (stabilisation) models the recovery process
 
 **Detection signal:** Monitor for nodes repeatedly reaching the critical threshold in short time windows — a pattern consistent with sustained flooding rather than organic load spikes.
@@ -56,9 +60,9 @@ The modelled system is an **n×n grid of interconnected servers** (nodes) with a
 **Mitigation via model:**
 - Compute λ₂ for the network topology before deployment
 - Higher λ₂ → more nodes must be removed to disconnect the network
-- Use the closed-form eigenvalue formula (functionality 10) to rapidly assess topology changes
+- Use the closed-form eigenvalue formula (functionality 10 of the original JAR) to rapidly assess topology changes
 
-**Key metric:** `ResilienceAnalyser.algebraicConnectivity(n)` — monitor this value as topology changes. Set alerting thresholds based on acceptable disconnection risk.
+**Key metric:** `new ResilienceAnalyser(n).algebraicConnectivity()` — monitor this value as topology changes. Set alerting thresholds based on acceptable disconnection risk.
 
 ---
 
@@ -71,7 +75,7 @@ The modelled system is an **n×n grid of interconnected servers** (nodes) with a
 **Mitigation via model:**
 - Prefer network topologies with large group orders (higher det(Δ̃))
 - The sandpile group order grows super-exponentially with n — larger grids are exponentially harder to infer
-- For 5×5: ≈ 1.7 × 10²⁴ possible safe states — infeasible to enumerate
+- For 5×5: ≈ 3.3 × 10¹³ recurrent states (4×4: ≈ 5.6 × 10⁸)
 
 ---
 
@@ -82,7 +86,7 @@ The modelled system is an **n×n grid of interconnected servers** (nodes) with a
 **Sandpile mapping:** A non-recurrent configuration may be transient — the system may never return to it naturally. An attacker who can force the system into a transient state disrupts the normal recovery guarantees.
 
 **Mitigation via model:**
-- Use Dhar's Burning Algorithm (functionality 4) to verify that the current load distribution is a recurrent (recoverable) configuration
+- Use Dhar's Burning Algorithm (functionality 4 of the original JAR) to verify that the current load distribution is a recurrent (recoverable) configuration
 - Automate this check as a periodic health probe in the monitoring stack
 - Alert when the current state is detected as non-recurrent
 
@@ -95,7 +99,7 @@ The modelled system is an **n×n grid of interconnected servers** (nodes) with a
 **Sandpile mapping:** A small spectral gap means the network converges slowly to equilibrium. Repeated sub-critical injections can maintain the network in a degraded state.
 
 **Mitigation via model:**
-- Compute and monitor the spectral gap: `ResilienceAnalyser.spectralGap(n)`
+- Compute and monitor the spectral gap: `new ResilienceAnalyser(n).spectralGap()`
 - Set minimum acceptable spectral gap thresholds based on SLA recovery time requirements
 - Consider denser topologies (higher connectivity) to increase spectral gap
 

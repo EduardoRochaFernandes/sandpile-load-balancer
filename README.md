@@ -1,297 +1,186 @@
-# Sandpile Load Balancer — Distributed Systems Modelling
+# Sandpile Load Balancer
 
-> **Modelling Load Balancing in Distributed Systems with Abelian Sandpile Theory**
+**Modelling load balancing on a grid of servers with the Abelian sandpile (chip-firing) model, in Java 17.**
 
-[![Build & Test](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/maven.yml/badge.svg)](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/maven.yml)
-[![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)](https://www.java.com)
-[![Maven](https://img.shields.io/badge/build-Maven-blue?logo=apachemaven)](https://maven.apache.org)
-[![Tests](https://img.shields.io/badge/tests-53%20passing-brightgreen?logo=junit5)](src/test)
+[![CI](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/ci.yml/badge.svg)](https://github.com/EduardoRochaFernandes/sandpile-load-balancer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-refactored%20%26%20extended-brightgreen)]()
+![Java 17+](https://img.shields.io/badge/Java-17%2B-orange?logo=openjdk&logoColor=white)
+![Build: Maven](https://img.shields.io/badge/build-Maven-blue?logo=apachemaven)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/EduardoRochaFernandes/sandpile-load-balancer)
 
----
+## Why this exists
 
-## Table of Contents
+A first-year, first-semester university project (ISEP, LAPR1) that asked: *can a classic mathematical model of
+avalanches be used to reason about how load spreads across a network of servers?* The original work was done by a team
+of four; this repository is my later, independent refactor: a clean object-oriented domain model, a Maven build, JUnit 5
+tests, CI, and documentation. It is a **learning / portfolio project, not a production load balancer.**
 
-- [Overview](#overview)
-- [Academic Origin](#academic-origin)
-- [Cybersecurity Relevance](#cybersecurity-relevance)
-- [Mathematical Background](#mathematical-background)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Building & Testing](#building--testing)
-- [Usage](#usage)
-- [Sample Results](#sample-results)
-- [Documentation](#documentation)
-- [Changelog](#changelog)
-- [License](#license)
+## Run it in one click
 
----
-
-## Overview
-
-This project implements a mathematical model for **load balancing in distributed server networks** using **Abelian Sandpile theory**. Each server is a node in an n×n grid; when a node is overloaded (≥ 4 tasks), it redistributes load to neighbours — mirroring how distributed systems manage congestion.
-
-Originally developed as a first-year university group project, this repository is a **personal, independently refactored and extended version** with a professional Maven build, 53 JUnit 5 unit tests, full OO design, and a cybersecurity framing of the mathematical results.
-
----
-
-## Academic Origin
-
-Developed in **LAPR1 (Laboratory/Project 1)** at **ISEP — Instituto Superior de Engenharia do Porto**, first semester of the **Bachelor's in Informatics Engineering**, in collaboration with **Local Load Balancing Company (LLBC)**.
-
-**Original team members:**
-
-| Name              | Student Number |
-|-------------------|----------------|
-| Bruno Silva       | 1250800        |
-| Afonso Martins    | 1250698        |
-| Martim Pereira    | 1251260        |
-| Eduardo Fernandes | 1250907        |
-
-> This repository is a **personal adaptation and significant refactor** of that original work, undertaken independently during free time to deepen understanding of distributed systems, mathematical modelling, Java software architecture, and OO design — skills directly transferable to cybersecurity engineering.
->
-> The original repository is private and hosted under the ISEP departmental GitHub organisation.
-
----
-
-## Cybersecurity Relevance
-
-### DDoS Mitigation & Load Distribution
-A DDoS attack floods target nodes beyond capacity — directly modelled by nodes exceeding the critical threshold. The toppling rule mirrors how **load balancers** redistribute traffic to prevent single points of failure.
-
-### Algebraic Connectivity (λ₂) & Network Hardening
-The second-smallest eigenvalue of the Laplacian (λ₂, the Fiedler value) quantifies resistance to node-removal attacks. Higher λ₂ means more nodes must be removed to disconnect the network — a formal measure used in **network hardening** assessments.
-
-### Recurrence as Self-Healing
-Recurrent configurations correspond to **self-healing network states** — states the system is guaranteed to recover to after any perturbation. **Dhar's Burning Algorithm** provides an efficient O(n²) self-healing health check.
-
-### Spectral Analysis & Intrusion Detection
-Eigenvalue decomposition of the Laplacian reveals the network's spectral properties, used in **anomaly detection** to identify unusual connectivity patterns indicative of network compromise or covert channel insertion.
-
-See [`docs/security/`](docs/security/) for detailed threat modelling and resilience analysis.
-
----
-
-## Mathematical Background
-
-The system models a **square grid graph** G = (V ∪ {sink}, E) where each node v holds σ(v) ∈ {0,1,2,3} tasks in a stable configuration.
-
-### Toppling Rule
-```
-If σ(v) ≥ 4:  σ(v) → σ(v) − 4
-               σ(u) → σ(u) + 1   for each internal neighbour u
-               (boundary tasks go to sink)
-```
-
-### Key Properties
-| Property | Description |
-|---|---|
-| Abelian | Final stable state is independent of toppling order |
-| Recurrence | Some configurations are guaranteed to recur — they form a group |
-| Group structure | Recurrent configs form a finite abelian group under ⊕ |
-| Group order | = det(Δ̃) — computable via the Laplacian |
-
----
-
-## Features
-
-- ✅ Maven build with all dependencies managed in `pom.xml`
-- ✅ **53 JUnit 5 unit tests** — all passing, zero failures
-- ✅ Full OO design: `SandpileMatrix` as domain object, value objects, interfaces
-- ✅ Matrix stabilisation with step-by-step heatmap export
-- ✅ Dhar's Burning Algorithm (recurrence verification)
-- ✅ Neutral element and inverse matrix computation
-- ✅ Recurrent matrix count — brute-force and Laplacian determinant
-- ✅ Eigenvalues/eigenvectors — numerical (Apache Commons Math) and closed-form
-- ✅ `ResilienceAnalyser` — algebraic connectivity, spectral gap, group order
-- ✅ CSV input/output with strict validation
-- ✅ Pre-compiled JAR releases for immediate use
-
----
-
-## Project Structure
-
-```
-sandpile-load-balancer/
-├── pom.xml                              # Maven build — dependencies, plugins, JAR config
-├── README.md
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── LICENSE
-├── .gitignore
-│
-├── src/
-│   ├── main/java/llbc/
-│   │   ├── Main.java                    # Entry point
-│   │   ├── core/
-│   │   │   ├── SandpileConfig.java      # Central constants (threshold, paths, limits)
-│   │   │   ├── SandpileMatrix.java      # Domain object: toppling, stabilise, ⊕
-│   │   │   ├── DharBurning.java         # Recurrence verification + enumeration
-│   │   │   └── NeutralElement.java      # Identity verification & inverse search
-│   │   ├── math/
-│   │   │   ├── LaplacianMatrix.java     # Reduced Laplacian + determinant
-│   │   │   ├── EigenSolver.java         # Numerical + closed-form eigendecomposition
-│   │   │   └── EigenResult.java         # Immutable value object for eigen pairs
-│   │   ├── io/
-│   │   │   ├── MatrixReader.java        # CSV parsing & validation
-│   │   │   ├── MatrixWriter.java        # CSV & formatted text output
-│   │   │   └── HeatmapImageWriter.java  # Heatmap JPG export
-│   │   ├── util/
-│   │   │   ├── MatrixUtils.java         # Utilities
-│   │   │   ├── InputValidator.java      # Input validation
-│   │   │   └── GenerateMatrices.java    # Test matrix generator
-│   │   ├── cli/
-│   │   │   ├── InteractiveMode.java     # Text menu handler
-│   │   │   └── NonInteractiveMode.java  # Flag-based dispatcher
-│   │   └── security/
-│   │       └── ResilienceAnalyser.java  # λ₂, spectral gap, group order
-│   │
-│   └── test/java/llbc/
-│       ├── core/
-│       │   ├── SandpileMatrixTest.java  # 19 tests
-│       │   └── DharBurningTest.java     # 9 tests
-│       ├── math/
-│       │   ├── LaplacianMatrixTest.java # 6 tests
-│       │   └── EigenSolverTest.java     # 10 tests
-│       └── security/
-│           └── ResilienceAnalyserTest.java  # 7 tests (+ 2 more = total 53)
-│
-├── input/                 # Sample CSV matrices
-├── output/                # Generated output (gitignored)
-├── releases/              # Pre-compiled JAR releases (v0.1.0 → v1.0.0)
-├── libs/                  # Apache Commons Math 4 JARs
-├── docs/                  # Technical documentation
-│   ├── INDEX.md
-│   ├── ARCHITECTURE.md
-│   ├── diagrams/          # Data flow & class overview
-│   ├── guides/            # Getting started, CLI reference, input format
-│   └── security/          # Resilience analysis & threat model
-└── scripts/
-    ├── run.sh             # Unix launcher
-    └── run.bat            # Windows launcher
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- **Java 17+** — `java -version`
-- **Maven 3.6+** — `mvn -version` (for building from source)
-
-### Clone
+- **In the browser:** click the *Open in GitHub Codespaces* badge above. The dev container installs Java 21 and Maven and
+  builds the project. Open `src/main/java/llbc/Main.java` and press **Run** (above `main`), or in the terminal:
+  `java -jar target/sandpile-load-balancer-2.0.0.jar`
+- **Locally** (Java 17+ and Maven 3.6+):
 
 ```bash
 git clone https://github.com/EduardoRochaFernandes/sandpile-load-balancer.git
 cd sandpile-load-balancer
+mvn package                                              # compiles, runs the tests, builds the fat JAR
+java -jar target/sandpile-load-balancer-2.0.0.jar        # guided demo
 ```
 
----
+## The model
 
-## Building & Testing
+Servers form an *n x n* grid. Each cell holds the number of tasks queued on that server.
+
+```mermaid
+flowchart LR
+    A[Cell holds >= 4 tasks?] -- yes --> B["Topple: cell loses 4 tasks,<br/>each of the 4 neighbours gains 1"]
+    B --> C{"Neighbour outside<br/>the grid?"}
+    C -- yes --> D[Task leaves through the boundary - the sink]
+    C -- no --> E[Neighbour may now overflow too]
+    E --> A
+    A -- no, for every cell --> F[Stable configuration]
+```
+
+- **Stabilisation.** Keep toppling until every cell holds 0-3 tasks. On a grid with a sink the process always terminates,
+  and the final state does **not** depend on the order of toppling (the *abelian* property) - that is the sandpile
+  analogue of "independent balancing decisions commute".
+- **Stabilised addition (⊕).** Add two load matrices cell by cell, then stabilise.
+- **Recurrent configurations.** The stable states that can be reached again after adding more load. They form a finite
+  abelian group under ⊕, with a **neutral element** and inverses. *Dhar's burning algorithm* tests whether a stable
+  matrix is recurrent.
+- **Group order = det(Δ̃)**, the determinant of the reduced Laplacian of the grid. Two independent implementations
+  (brute force and determinant) are cross-checked in the demo (100352 for 3x3).
+
+## What it does today
+
+| Capability | Where |
+|---|---|
+| Toppling, stabilisation, stabilised addition, sweep counting | `llbc.core.SandpileMatrix` |
+| Dhar's burning algorithm, brute-force recurrent count | `llbc.core.DharBurning` |
+| Neutral-element check, inverse search (exhaustive) | `llbc.core.NeutralElement` |
+| Reduced Laplacian and its determinant | `llbc.math.LaplacianMatrix` |
+| Eigenvalues/eigenvectors: numerical (Apache Commons Math) and closed form | `llbc.math.EigenSolver` |
+| "Resilience report" (see limitations) | `llbc.security.ResilienceAnalyser` |
+| Strict CSV loading | `llbc.io.MatrixReader` |
+| CLI: `demo`, `stabilise FILE.csv`, `resilience N`, `help` | `llbc.Main` |
+
+62 JUnit 5 tests (run `mvn test`); CI runs them on Java 17 and 21 and smoke-tests the packaged JAR.
+
+## Usage and real example output
 
 ```bash
-# Run all 53 tests
-mvn test
-
-# Compile and package fat JAR
-mvn package
-
-# Run the fat JAR
-java -jar target/sandpile-load-balancer-2.0.0.jar
+java -jar target/sandpile-load-balancer-2.0.0.jar                       # demo
+java -jar target/sandpile-load-balancer-2.0.0.jar stabilise input/matrix5.csv
+java -jar target/sandpile-load-balancer-2.0.0.jar resilience 5
 ```
 
-### Test Results
+Output of `stabilise input/matrix5.csv` (captured from the CI run):
 
 ```
-SandpileMatrix    — 19 tests  ✅
-DharBurning       —  9 tests  ✅
-LaplacianMatrix   —  6 tests  ✅
-EigenSolver       — 10 tests  ✅
-ResilienceAnalyser—  9 tests  ✅
-─────────────────────────────────
-Total             — 53 tests  ✅  0 failures
+Initial load (5x5, 86 tasks):
+[  5  6  0  1  5  ]
+[  2  6  4  4  2  ]
+[  3  0  0  4  3  ]
+[  1  0  3  5  5  ]
+[  6  6  6  3  6  ]
+Stabilised after 8 sweep(s); 44 tasks left through the boundary (sink):
+[  2  1  3  3  0  ]
+[  2  0  2  1  1  ]
+[  0  2  3  3  3  ]
+[  3  1  2  1  2  ]
+[  2  1  3  1  0  ]
+Recurrent (Dhar's burning algorithm): true
 ```
 
----
+Part of the default demo (3x3 grid):
 
-## Usage
+```
+Initial load (25 tasks):            Balanced after 1 toppling sweep(s) (4 tasks left through the boundary):
+[  1  5  2  ]                       [  3  2  3  ]
+[  4  4  2  ]                       [  2  2  3  ]
+[  6  1  0  ]                       [  3  3  0  ]
+...
+4) Number of recurrent 3x3 configurations, two independent ways:
+   brute force over all 4^9 = 262144 stable grids : 100352
+   determinant of the reduced Laplacian            : 100352
+```
 
-### Pre-compiled JAR (no build required)
+(A "sweep" is one row-major pass over the grid that topples every cell currently at 4 or more.)
+
+CSV input: one row per line, comma-separated non-negative integers, square matrix, 2 <= n <= 1000
+([format](docs/guides/INPUT_FORMAT.md)).
+
+### The original full CLI (pre-compiled)
+
+The team's original 10-function CLI (heatmap export, inverse search, eigenvectors by flag, ...) is only available as a
+**pre-compiled JAR** (`releases/final-release_1.0.0/main.jar`, built for **Java 21+**); its source is not in this repo.
 
 ```bash
-cd releases/final-release_1.0.0
-java -jar main.jar
+./scripts/run.sh -f 7 -d 4 -o result.txt        # Windows: scripts\run.bat -f 7 -d 4 -o result.txt
 ```
 
-### Non-interactive / scripted
+See the [CLI reference](docs/guides/CLI_REFERENCE.md). CI executes several of these functions on every push.
 
-```bash
-java -jar main.jar -f 2 -a matrix5.csv -o result.txt
-java -jar main.jar -f 4 -a matrix3.csv -o dhar.txt
-java -jar main.jar -f 7 -d 4 -o laplacian.txt
-java -jar main.jar -f 10 -d 3 -o eigenvalues.txt
+## Complexity and limitations
+
+- `toppleStep` / `isStable`: O(n²) per sweep; the number of sweeps depends on the input (no tight bound is claimed).
+- Dhar's burning (`DharBurning.isRecurrent`): O(n²) per pass and up to n² passes, so **O(n⁴) worst case** in this simple
+  multi-pass implementation (a queue-based version would be O(n²)).
+- Brute-force counting, neutral-element check and inverse search enumerate all 4^(n²) stable grids: exponential, usable for
+  n <= 3 (inverse search n <= 4 with patience).
+- The Laplacian is stored densely (n² x n²): O(n⁴) memory and roughly O(n⁶) time for the numerical eigendecomposition,
+  so `resilience` is capped at n = 20. The determinant is a floating-point value, rounded for display.
+- The model is fixed: square grid, threshold 4, sink around the boundary. Real load balancers have other topologies,
+  capacities and policies.
+- **The "resilience report" is an analogy, not a validated security metric.** "Algebraic connectivity (λ₂)" is the
+  second-smallest eigenvalue of the reduced (sink-grounded) grid Laplacian, and "spectral gap" is computed as
+  λ_max − λ₂ (see `ResilienceAnalyser`); neither is the textbook Fiedler value or mixing-time gap of a graph. The
+  [security write-ups](docs/security/RESILIENCE_ANALYSIS.md) are conceptual discussion.
+
+## Status / roadmap
+
+- Done: domain model, CSV loading, small CLI, tests, CI, dev container.
+- Not done: the full CLI source (only the JAR exists), heatmap/GIF export in the Maven build, performance work
+  (queue-based Dhar, sparse Laplacian, parallel inverse search), a sensible non-grid topology.
+
+## Project structure
+
 ```
-
-See [`docs/guides/CLI_REFERENCE.md`](docs/guides/CLI_REFERENCE.md) for all 10 functionalities.
-
----
-
-## Sample Results
-
-### Neutral Element (3×3)
+.
+├── pom.xml                      Maven build (Java 17, JUnit 5, AssertJ, Commons Math 4)
+├── src/main/java/llbc/
+│   ├── Main.java                CLI entry point
+│   ├── core/                    SandpileMatrix, DharBurning, NeutralElement, SandpileConfig
+│   ├── io/                      MatrixReader
+│   ├── math/                    LaplacianMatrix, EigenSolver, EigenResult
+│   └── security/                ResilienceAnalyser
+├── src/test/java/llbc/          JUnit 5 tests (62)
+├── input/                       sample CSV load matrices
+├── releases/final-release_1.0.0 original pre-compiled CLI + its sample inputs
+├── scripts/                     run.sh / run.bat launchers for the original JAR
+├── docs/                        architecture, guides, security notes
+├── .devcontainer/               GitHub Codespaces (Java 21 + Maven)
+└── .github/                     CI workflow, issue/PR templates, Dependabot
 ```
-[ 2  1  2 ]
-[ 1  0  1 ]
-[ 2  1  2 ]
-```
-
-### Resilience Report (3×3 grid)
-```
-╔══════════════════════════════════════════════════════════╗
-║    NETWORK RESILIENCE REPORT  —  3×3                     ║
-╠══════════════════════════════════════════════════════════╣
-║  Algebraic Connectivity (λ₂)  : 0.585786                 ║
-║    → Resistance to targeted node-removal attacks         ║
-║  Spectral Gap (λ_max − λ_min) : 6.828427                 ║
-║    → Speed of recovery after load spike or attack        ║
-║  Resilient State Count        : 100352                   ║
-║    → Safe operating states (sandpile group order |G|)    ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
 
 ## Documentation
 
-| Document | Description |
-|---|---|
-| [`docs/INDEX.md`](docs/INDEX.md) | Documentation index |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System design & decisions |
-| [`docs/diagrams/DATA_FLOW.md`](docs/diagrams/DATA_FLOW.md) | Component interaction diagrams |
-| [`docs/diagrams/CLASS_OVERVIEW.md`](docs/diagrams/CLASS_OVERVIEW.md) | Class responsibilities |
-| [`docs/guides/GETTING_STARTED.md`](docs/guides/GETTING_STARTED.md) | Setup & first run |
-| [`docs/guides/CLI_REFERENCE.md`](docs/guides/CLI_REFERENCE.md) | All 10 CLI functionalities |
-| [`docs/guides/INPUT_FORMAT.md`](docs/guides/INPUT_FORMAT.md) | CSV format spec |
-| [`docs/security/RESILIENCE_ANALYSIS.md`](docs/security/RESILIENCE_ANALYSIS.md) | Sandpile ↔ cybersecurity |
-| [`docs/security/THREAT_MODEL.md`](docs/security/THREAT_MODEL.md) | STRIDE threat model |
+[Index](docs/INDEX.md) · [Architecture](docs/ARCHITECTURE.md) · [Getting started](docs/guides/GETTING_STARTED.md) ·
+[CLI reference](docs/guides/CLI_REFERENCE.md) · [Input format](docs/guides/INPUT_FORMAT.md) ·
+[Resilience analysis](docs/security/RESILIENCE_ANALYSIS.md) · [Threat model](docs/security/THREAT_MODEL.md) ·
+[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md)
 
----
+## Origin and licence
 
-## Changelog
+Developed in the LAPR1 course (Bachelor's in Informatics Engineering, ISEP - Instituto Superior de Engenharia do Porto)
+as a group project by Bruno Silva, Afonso Martins, Martim Pereira and Eduardo Fernandes. The refactor in `src/` is
+Eduardo Fernandes's independent work. The pre-compiled JAR in `releases/` is the original team build.
 
-See [CHANGELOG.md](CHANGELOG.md).
+[MIT](LICENSE). The licence covers the refactored personal version of this project; the original academic work is subject
+to the institution's academic policies. If you are a student with a similar assignment, use this only as a reference.
 
----
+## Author
 
-## License
-
-[MIT License](LICENSE) — free to use, study, and adapt with attribution.
-
----
-
-*Refactored and extended independently for personal learning and portfolio purposes.*  
-*Original group project developed at ISEP under LAPR1, academic year 2025/26.*
+[Eduardo Fernandes](https://github.com/EduardoRochaFernandes)

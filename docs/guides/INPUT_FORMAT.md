@@ -52,6 +52,8 @@ This is the **neutral element** of the 3×3 sandpile group.
 
 ## File Placement
 
+With the Maven build (`java -jar target/sandpile-load-balancer-2.0.0.jar stabilise FILE.csv`) any path is accepted, for example `input/matrix5.csv`. The rules below apply to the original JAR:
+
 Place input files in the `input/` folder relative to the JAR you are running:
 
 ```
@@ -69,12 +71,7 @@ When using the scripts from the project root, the working directory changes auto
 
 ## Generating Test Matrices
 
-The `GenerateMatrices` utility (in `src/main/java/llbc/util/`) can generate:
-
-- **Random matrices** — values 0–6, any dimension
-- **Recurrent matrices** — guaranteed recurrent pattern (corners = 2, everything else = 3)
-
-Run it separately from the main JAR by compiling and executing `GenerateMatrices.main()`.
+The original JAR bundles a `GenerateMatrices` helper (random matrices with values 0-6, or a recurrent pattern with corners = 2 and everything else = 3). Its source is not part of this repository; the sample files in `input/` can be used instead.
 
 ---
 

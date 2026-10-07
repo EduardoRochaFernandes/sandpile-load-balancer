@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the **Sandpile Load Balancer** documentation. This folder contains technical documentation for the refactored project, including architecture decisions, mathematical background, usage guides, and cybersecurity analysis.
+Technical documentation for the Sandpile Load Balancer: architecture, usage guides, and a conceptual cybersecurity discussion. Start with the [README](../README.md).
 
 ---
 

@@ -1,56 +1,29 @@
 # Contributing
 
-Thank you for your interest in this project. As this is primarily a personal portfolio and learning repository, contributions are welcome in the form of bug reports, suggestions, and improvements.
+This is a small portfolio and learning project. Bug reports, questions and suggestions are welcome as issues.
 
----
+## Development
 
-## Reporting Issues
+```bash
+mvn verify        # compile, run the 62 tests, build the fat JAR (Java 17+, Maven 3.6+)
+```
 
-If you find a bug or unexpected behaviour:
+Or open the repository in GitHub Codespaces (see the README); the dev container has everything installed.
 
-1. Check existing issues first to avoid duplicates.
-2. Open a new issue with:
-   - A clear title and description
-   - Steps to reproduce the problem
-   - Expected vs. actual behaviour
-   - Java version and OS if relevant
-   - Sample CSV input that triggers the issue (if applicable)
+## Pull requests
 
----
+1. Keep each PR focused on one change.
+2. Add or update JUnit 5 tests next to the code (`src/test/java/llbc/...`).
+3. Make sure `mvn verify` passes; CI runs the same on Java 17 and 21.
+4. Add a line under `[Unreleased]` in `CHANGELOG.md`.
+5. Use [Conventional Commit](https://www.conventionalcommits.org/) messages (`feat:`, `fix:`, `docs:`, ...).
 
-## Suggesting Enhancements
+## Style
 
-Open an issue with the `enhancement` label. Ideas particularly welcome around:
+Standard Java naming, Javadoc on public methods, named constants instead of magic numbers (`SandpileConfig`),
+English for code, comments and documentation. See `.editorconfig`.
 
-- Additional matrix operations from sandpile theory
-- Performance improvements for large matrices (parallelism, sparse representation)
-- Cybersecurity/network-resilience analysis extensions
-- A proper build system (Maven or Gradle integration)
-- Visualisation improvements (animated GIF output, JavaFX UI)
+## Academic integrity
 
----
-
-## Pull Requests
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Keep changes focused — one concern per PR.
-4. Add or update tests in `SandpileTests.java` for any logic changes.
-5. Update `CHANGELOG.md` under an `[Unreleased]` section.
-6. Submit a pull request with a clear description of what was changed and why.
-
----
-
-## Code Style
-
-- Standard Java naming conventions (camelCase methods, PascalCase classes, UPPER_SNAKE constants)
-- Javadoc on all public methods
-- Prefer `for-each` loops over index-based where the index is not needed
-- No magic numbers — use named constants
-- All CSV file paths must be validated before reading
-
----
-
-## Academic Integrity Note
-
-This repository is a personal refactor of an academic project. If you are a student working on a similar assignment, please do not copy this code for submission — use it as a reference for understanding the concepts only.
+The project started as a university assignment. If you are a student with a similar assignment, use this repository as
+a reference for the concepts only; do not submit it as your own work.

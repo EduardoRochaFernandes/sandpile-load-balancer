@@ -2,7 +2,11 @@
 
 ## Overview
 
-The Abelian Sandpile model is not merely an academic exercise — it provides a rigorous mathematical framework for analysing the resilience and fault-tolerance of distributed network systems. This document explains the connections between sandpile theory and practical cybersecurity concepts.
+> **Scope note.** This document is a conceptual discussion that maps sandpile concepts onto network-security
+> ideas by analogy. The mapping has not been validated against real systems; the numbers are produced by
+> the classes in `src/`. Treat it as a learning exercise, not as a security assessment method.
+
+The Abelian Sandpile model is not merely an academic exercise — it gives a mathematical vocabulary that can be used to *reason about* load spreading in distributed systems. This document explains the connections between sandpile theory and practical cybersecurity concepts.
 
 ---
 
@@ -44,13 +48,15 @@ In security terms:
 - **Recurrent** = self-healing state (high availability, resilient)
 - **Transient** = state the network may never return to (fragile under repeated attack)
 
-**Dhar's Burning Algorithm** (implemented in `DharBurning.isRecurrent()`) provides an efficient O(n²) test for recurrence — analogous to a **network health check** that verifies whether the current state is recoverable.
+**Dhar's Burning Algorithm** (implemented in `DharBurning.isRecurrent()`) provides a polynomial-time test for recurrence (O(n⁴) worst case in this multi-pass implementation) — analogous to a **network health check** that verifies whether the current state is recoverable.
 
 ---
 
 ## 4. Algebraic Connectivity (Fiedler Value, λ₂)
 
-The **algebraic connectivity** of the network graph is the second-smallest eigenvalue of its Laplacian matrix, denoted λ₂ (the Fiedler value).
+The **algebraic connectivity** of a connected graph is the second-smallest eigenvalue of its Laplacian matrix (the Fiedler value).
+
+Note: `ResilienceAnalyser` reports λ₂ as the closed-form value below, derived from the *reduced* (sink-grounded) grid Laplacian that this project builds. It is related to, but not identical with, the Fiedler value of the plain grid graph.
 
 For the n×n grid:
 ```
@@ -59,10 +65,10 @@ For the n×n grid:
 
 | n | λ₂ |
 |---|---|
-| 2 | ≈ 1.172 |
-| 3 | ≈ 0.586 |
-| 5 | ≈ 0.268 |
-| 10 | ≈ 0.081 |
+| 2 | 2.000 |
+| 3 | ≈ 1.172 |
+| 5 | ≈ 0.536 |
+| 10 | ≈ 0.162 |
 
 **Security interpretation:**
 - **Higher λ₂** → harder to disconnect the network → more resistant to targeted node-removal attacks
@@ -75,7 +81,7 @@ This metric is used in **network hardening** assessments to identify topological
 
 ## 5. Spectral Gap — Recovery Speed
 
-The **spectral gap** (λ_max − λ_min) relates to how quickly the network returns to equilibrium after a perturbation — whether from a load spike, hardware fault, or attack.
+In `ResilienceAnalyser` the "spectral gap" is computed as λ_max − λ₂ (a spectrum width, not the textbook mixing-time gap). The textbook spectral gap relates to how quickly the network returns to equilibrium after a perturbation — whether from a load spike, hardware fault, or attack.
 
 A larger spectral gap implies:
 - Faster convergence of load balancing algorithms
@@ -94,8 +100,8 @@ The **order of the sandpile group** — equal to det(Δ̃), the determinant of t
 |---|---|
 | 2×2 | 192 |
 | 3×3 | 100,352 |
-| 4×4 | ≈ 1.7 × 10¹² |
-| 5×5 | ≈ 1.7 × 10²⁴ |
+| 4×4 | ≈ 5.58 × 10⁸ (557,568,000) |
+| 5×5 | ≈ 3.26 × 10¹³ |
 
 A larger group order means:
 - Greater diversity of safe operating states

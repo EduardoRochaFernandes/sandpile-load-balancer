@@ -1,67 +1,44 @@
-# Architecture Notes
+# Architecture
 
-## System Design
-
-The sandpile system is structured around four distinct concerns, each mapped to a Java package:
-
-### `llbc.core`
-The mathematical heart of the system. Contains:
-- `SandpileMatrix` — toppling rule, stabilisation, stable addition
-- `DharBurning` — recurrence verification and exhaustive enumeration
-
-These two classes implement the complete Abelian Sandpile model and are independent of I/O, enabling straightforward unit testing.
-
-### `llbc.math`
-Higher-level algebraic computations:
-- `LaplacianMatrix` — constructs the graph Laplacian and computes its determinant
-- `EigenSolver` — eigenvalue/eigenvector decomposition (numerical and closed-form)
-
-Depends on Apache Commons Math 4 for matrix operations.
-
-### `llbc.io`
-All file system interaction:
-- `MatrixReader` — CSV parsing with strict validation
-- `MatrixWriter` — CSV and formatted text output
-- `HeatmapImageWriter` — JPEG heatmap generation for each stabilisation step
-
-### `llbc.util`
-Shared utilities:
-- `MatrixUtils` — deep copy, element-wise addition, equality, stable matrix enumeration
-- `InputValidator` — string-to-integer parsing with whitespace/letter rejection
-- `GenerateMatrices` — helper tool for generating test matrices
-
-### `llbc.cli`
-Command-line interface:
-- `InteractiveMode` — text menu loop with user prompts
-- `NonInteractiveMode` — flag-based argument parsing for scripted execution
-
-### `llbc.security`
-Cybersecurity-oriented extensions:
-- `ResilienceAnalyser` — algebraic connectivity, spectral gap, resilient state count
-
----
-
-## Data Flow
+## What is in this repository
 
 ```
-CSV file → MatrixReader → int[][] matrix
-                                │
-                    ┌───────────┼───────────┐
-                    ▼           ▼           ▼
-             SandpileMatrix  DharBurning  LaplacianMatrix
-             (stabilise)     (isRecurrent)(determinant)
-                    │                       │
-                    ▼                       ▼
-             MatrixWriter            ResilienceAnalyser
-             HeatmapImageWriter      (security report)
+llbc.core      SandpileMatrix      toppling rule, stabilisation, stabilised addition (⊕)
+               DharBurning         recurrence test (burning algorithm), brute-force count
+               NeutralElement      neutral-element check, exhaustive inverse search
+               SandpileConfig      constants (threshold 4, dimension limits)
+llbc.math      LaplacianMatrix     reduced Laplacian (dense n² x n²) and determinant
+               EigenSolver         eigen-decomposition: numerical (Commons Math) or closed form
+               EigenResult         immutable eigenvalue/eigenvector pairs
+llbc.io        MatrixReader        strict CSV parsing (square, non-negative integers)
+llbc.security  ResilienceAnalyser  closed-form λ₂ / spectrum width + group-order report
+llbc           Main                CLI: demo | stabilise FILE | resilience N | help
 ```
 
----
+`core` and `math` have no I/O and are covered by unit tests; `Main` is the only class that prints (apart from
+`ResilienceAnalyser.printReport`).
 
-## Limitations & Future Work
+```mermaid
+flowchart TD
+    CSV[CSV file] --> R[MatrixReader] --> M[SandpileMatrix]
+    M --> S[stabilise / add]
+    M --> D[DharBurning]
+    M --> N[NeutralElement]
+    L[LaplacianMatrix] --> E[EigenSolver]
+    L --> RA[ResilienceAnalyser]
+    Main --> R
+    Main --> RA
+```
 
-- **Performance**: brute-force enumeration (functionalities 5, 6, 8) is O(4^(n²)) and only feasible for n ≤ 3. For n ≥ 4, the Laplacian-based approach (functionality 7) must be used.
-- **Build system**: Currently uses a pre-compiled JAR. A Maven or Gradle build would enable reproducible compilation and dependency management.
-- **Parallelism**: The inverse matrix search (functionality 8) iterates over up to 4^(n²) candidates sequentially. A parallel stream or thread pool would accelerate this for n ≥ 4.
-- **Visualisation**: Heatmaps are exported as individual JPEGs. An animated GIF output would make the stabilisation process clearer for presentations.
-- **CLI**: Argument parsing is hand-written. Apache Commons CLI or picocli would provide more robust argument handling with auto-generated help text.
+## The original CLI
+
+The original team's full CLI (interactive menu and `-f/-a/-b/-d/-o` flags, heatmap export) is shipped only as the
+pre-compiled `releases/final-release_1.0.0/main.jar` (built for Java 21+). Its source is not included here. See the
+[CLI reference](guides/CLI_REFERENCE.md). The older design documents in `docs/diagrams/` describe that CLI.
+
+## Limitations
+
+- Brute-force routines (`countRecurrent`, `isNeutralElement`, `findInverse`) are O(4^(n²)); practical only for n <= 3 (inverse search n <= 4).
+- The dense Laplacian costs O(n⁴) memory; `resilience` is limited to n <= 20.
+- `DharBurning.isRecurrent` is a simple multi-pass loop, O(n⁴) worst case.
+- Fixed model: square grid, threshold 4, boundary sink.

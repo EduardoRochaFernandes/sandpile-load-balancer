@@ -1,5 +1,9 @@
 # Data Flow & Component Interaction
 
+> **Note.** These diagrams describe the design of the original full CLI (distributed as the pre-compiled JAR). In this
+> repository's `src/` only `core`, `math`, `security`, `io.MatrixReader` and a small `Main` exist; the interactive/flag CLI,
+> `util` and heatmap-writer sources are not included. See [ARCHITECTURE.md](../ARCHITECTURE.md) for what is actually here.
+
 ## End-to-End Data Flow
 
 ```

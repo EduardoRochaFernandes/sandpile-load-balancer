@@ -1,5 +1,7 @@
 # CLI Reference
 
+This page documents the **original pre-compiled CLI** (`releases/final-release_1.0.0/main.jar`, requires **Java 21+**). The Maven build has its own small CLI (`demo`, `stabilise FILE.csv`, `resilience N`); see the [README](../../README.md). CI runs functionalities 1, 2, 4, 5, 6, 7, 9 and 10 against this JAR on every push.
+
 ## Modes
 
 The application supports two execution modes:
